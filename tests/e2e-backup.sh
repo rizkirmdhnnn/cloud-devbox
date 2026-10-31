@@ -98,6 +98,8 @@ n=$(ex d 'set -a; . ~/.config/devbox/s3.env; aws --endpoint-url $S3_ENDPOINT s3 
 pass "retention keeps at most DEVBOX_BACKUP_KEEP snapshots ($n)"
 
 ex d 'set -a; . ~/.config/devbox/s3.env; aws --endpoint-url $S3_ENDPOINT s3 cp s3://e2e/e2e/devbox/latest.json - | jq -r .key' | grep -q '\.tar\.gpg$' || fail "snapshot not encrypted"
-ex d 'set -a; . ~/.config/devbox/s3.env; k=$(aws --endpoint-url $S3_ENDPOINT s3 cp s3://e2e/e2e/devbox/latest.json - | jq -r .key); aws --endpoint-url $S3_ENDPOINT s3 cp s3://e2e/e2e/devbox/$k - | grep -ac "APP_KEY=secret"' | grep -qx 0 || fail "plaintext secret found in stored snapshot"
-pass "stored snapshot is encrypted (no plaintext .env content)"
+ex d 'set -a; . ~/.config/devbox/s3.env; k=$(aws --endpoint-url $S3_ENDPOINT s3 cp s3://e2e/e2e/devbox/latest.json - | jq -r .key)
+aws --endpoint-url $S3_ENDPOINT s3 cp s3://e2e/e2e/devbox/$k /tmp/snap --only-show-errors
+file -b /tmp/snap | grep -qi "PGP" && ! tar -tf /tmp/snap >/dev/null 2>&1' || fail "stored snapshot is not encrypted"
+pass "stored snapshot is PGP-encrypted and unreadable without the passphrase"
 echo "E2E BACKUP TEST PASSED"

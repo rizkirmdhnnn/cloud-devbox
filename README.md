@@ -90,6 +90,10 @@ Safety rules:
    - Required: `PASSWORD` (or `HASHED_PASSWORD`).
    - Backup: `S3_ENDPOINT`, `S3_BUCKET`, `S3_PREFIX`, `AWS_ACCESS_KEY_ID`,
      `AWS_SECRET_ACCESS_KEY`, `AWS_DEFAULT_REGION`, `BACKUP_PASSPHRASE`.
+   - Platform bucket bindings are read directly too: `S3_KEY`, `S3_SECRET`
+     and `S3_REGION` (Skalo) are mapped to the AWS names at boot, so the
+     binding's own credentials are used and rotate with it. `S3_PREFIX`
+     defaults to `cloud-devbox`.
    - Use a dedicated S3 bucket or prefix with a key limited to it. Add a bucket
      lifecycle rule as a second retention guard.
 6. Set the shutdown grace period as high as the platform allows (60s or more)

@@ -49,6 +49,12 @@ p.write_text("\n".join(lines) + "\n")
 p.chmod(0o600)
 PY
 
+# Accept the variable names a platform binding publishes (Skalo: S3_KEY,
+# S3_SECRET, S3_REGION) as well as the standard AWS names.
+export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-${S3_ACCESS_KEY_ID:-${S3_KEY:-}}}"
+export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-${S3_SECRET_ACCESS_KEY:-${S3_SECRET:-}}}"
+export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-${S3_REGION:-}}"
+
 # Backup settings go to a 0600 file read only by devbox-* scripts.
 S3_VARS=(S3_ENDPOINT S3_BUCKET S3_PREFIX S3_FORCE_PATH_STYLE AWS_ACCESS_KEY_ID
          AWS_SECRET_ACCESS_KEY AWS_DEFAULT_REGION BACKUP_PASSPHRASE)
@@ -60,7 +66,8 @@ rm -f "$HOME/.config/devbox/restore-status" "$HOME/.config/devbox/aws-config"
 
 # Nothing below this point (IDE, terminals, extensions, project code) needs
 # these. exec replaces this process, so /proc/1/environ is clean as well.
-unset PASSWORD HASHED_PASSWORD AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY BACKUP_PASSPHRASE
+unset PASSWORD HASHED_PASSWORD AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY BACKUP_PASSPHRASE \
+      S3_KEY S3_SECRET S3_ACCESS_KEY_ID S3_SECRET_ACCESS_KEY
 umask 022
 
 exec /usr/bin/supervisord -n -c /etc/devbox/supervisord.conf
