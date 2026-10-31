@@ -1,0 +1,14 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+*.tar
+*.tar.gz
+*.zip
+node_modules
+vendor
+.venv
+__pycache__
+README.md
+docs/

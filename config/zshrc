@@ -1,0 +1,17 @@
+# Cloud DevBox interactive shell.
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=50000
+SAVEHIST=50000
+setopt APPEND_HISTORY SHARE_HISTORY HIST_IGNORE_DUPS INTERACTIVE_COMMENTS
+autoload -Uz compinit && compinit -u
+autoload -Uz vcs_info
+precmd() { vcs_info }
+zstyle ':vcs_info:git:*' formats ' (%b)'
+setopt PROMPT_SUBST
+PROMPT='%F{cyan}%~%f%F{yellow}${vcs_info_msg_0_}%f %# '
+
+alias ll='ls -lah'
+alias gs='git status --short --branch'
+alias gd='git diff'
+alias art='php artisan'
+alias svc='supervisorctl -c /etc/devbox/supervisord.conf'
